@@ -1,4 +1,4 @@
-module group_three.csc.collegeworkmanager {
+module group_three.collegeworkmanager {
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.web;
@@ -10,6 +10,6 @@ module group_three.csc.collegeworkmanager {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
 
-    opens group_three.csc325.collegeworkmanager to javafx.fxml;
-    exports group_three.csc325.collegeworkmanager;
+    opens group_three.collegeworkmanager to javafx.fxml;
+    exports group_three.collegeworkmanager;
 }

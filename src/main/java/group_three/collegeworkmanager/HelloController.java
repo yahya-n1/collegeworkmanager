@@ -1,4 +1,4 @@
-package group_three.csc325.collegeworkmanager;
+package group_three.collegeworkmanager;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;

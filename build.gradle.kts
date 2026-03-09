@@ -6,7 +6,7 @@ plugins {
     id("org.beryx.jlink") version "2.25.0"
 }
 
-group = "group_three.csc325"
+group = "group_three"
 version = "1.0-SNAPSHOT"
 
 repositories {
