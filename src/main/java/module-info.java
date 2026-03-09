@@ -1,4 +1,4 @@
-module group3.csc325.collegeworkmanager {
+module group_three.csc.collegeworkmanager {
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.web;

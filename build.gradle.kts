@@ -6,7 +6,7 @@ plugins {
     id("org.beryx.jlink") version "2.25.0"
 }
 
-group = "group_three.group_three"
+group = "group_three.csc325"
 version = "1.0-SNAPSHOT"
 
 repositories {
@@ -26,8 +26,8 @@ tasks.withType<JavaCompile> {
 }
 
 application {
-    mainModule.set("group3.group_three.collegeworkmanager")
-    mainClass.set("group3.group_three.collegeworkmanager.HelloApplication")
+    mainModule.set("${group}.${rootProject.name}")
+    mainClass.set("${group}.${rootProject.name}.HelloApplication")
 }
 
 javafx {
