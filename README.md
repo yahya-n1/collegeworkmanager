@@ -6,7 +6,7 @@ Users will have the option of creating personal calendars as well as creating sh
 This project directly addresses the issues of disorganization with scheduling and lack of effective communication and coordination among team members. The Smart Collaborative Calendar System will result in increased levels of productivity and improved time management by utilizing one platform to house task management, reminders and collaboration. This project illustrates full stack application development, database design and development, user authentication methodologies, and collaborative software engineering processes.
 
 ## World Assumptions
-Access to computers and/or cellular devices with Internet connection.
+Access to computers with Internet connection.
 Ability to share their calendars with multiple other people.
 Functionality will occur in a realistic academic or business environment.
 User will expect secure logon procedures.
