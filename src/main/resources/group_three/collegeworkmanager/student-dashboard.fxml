@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="group_three.collegeworkmanager.controller.StudentDashboardController"
+      prefWidth="850.0" prefHeight="650.0">
+
+    <!-- Top Bar -->
+    <HBox alignment="CENTER_LEFT" spacing="10.0"
+          style="-fx-background-color: #27ae60; -fx-padding: 10 15 10 15;">
+        <Label text="College Work Manager — Student"
+               style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label fx:id="studentNameLabel" style="-fx-text-fill: #d5f5e3; -fx-font-size: 13px;"/>
+        <Button text="Logout" onAction="#handleLogout"
+                style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-cursor: hand;"/>
+    </HBox>
+
+    <TabPane VBox.vgrow="ALWAYS">
+
+        <!-- ── Courses & Assignments ── -->
+        <Tab text="Courses &amp; Assignments" closable="false">
+            <SplitPane dividerPositions="0.28">
+
+                <!-- Left: course list -->
+                <VBox spacing="6.0" minWidth="180.0">
+                    <padding><Insets top="10" right="8" bottom="10" left="10"/></padding>
+                    <HBox spacing="6.0" alignment="CENTER_LEFT">
+                        <Label text="My Courses" style="-fx-font-weight: bold;"/>
+                        <Button text="↻" onAction="#handleRefreshCourses"
+                                style="-fx-padding: 2 6 2 6; -fx-font-size: 11px;"/>
+                    </HBox>
+                    <ListView fx:id="courseListView" VBox.vgrow="ALWAYS"/>
+                </VBox>
+
+                <!-- Right: assignments for selected course -->
+                <VBox spacing="8.0">
+                    <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+                    <Label fx:id="selectedCourseLabel" text="← Select a course"
+                           style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                    <TableView fx:id="assignmentTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="assignTitleCol"   text="Title"       prefWidth="200"/>
+                            <TableColumn fx:id="assignDueDateCol" text="Due Date"    prefWidth="110"/>
+                            <TableColumn fx:id="assignDescCol"    text="Description" prefWidth="260"/>
+                        </columns>
+                        <columnResizePolicy>
+                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                        </columnResizePolicy>
+                    </TableView>
+                    <HBox spacing="10.0">
+                        <Button fx:id="submitBtn" text="Submit Assignment"
+                                onAction="#handleSubmitAssignment"
+                                style="-fx-background-color: #3498db; -fx-text-fill: white;"/>
+                        <Button fx:id="downloadBtn" text="Download Material"
+                                onAction="#handleDownloadMaterial"
+                                style="-fx-background-color: #27ae60; -fx-text-fill: white;"/>
+                    </HBox>
+                </VBox>
+
+            </SplitPane>
+        </Tab>
+
+        <!-- ── My Submissions ── -->
+        <Tab text="My Submissions" closable="false">
+            <VBox spacing="8.0">
+                <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+                <HBox spacing="8.0" alignment="CENTER_LEFT">
+                    <Label text="My Submitted Assignments" style="-fx-font-weight: bold;"/>
+                    <Button text="↻ Refresh" onAction="#handleRefreshSubmissions"
+                            style="-fx-padding: 3 8 3 8; -fx-font-size: 12px;"/>
+                </HBox>
+                <TableView fx:id="submissionsTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="subAssignCol" text="Assignment ID" prefWidth="220"/>
+                        <TableColumn fx:id="subDateCol"   text="Submitted At"  prefWidth="200"/>
+                        <TableColumn fx:id="subContentCol" text="Content"      prefWidth="350"/>
+                    </columns>
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                    </columnResizePolicy>
+                </TableView>
+            </VBox>
+        </Tab>
+
+    </TabPane>
+</VBox>

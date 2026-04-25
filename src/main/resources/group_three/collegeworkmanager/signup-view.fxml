@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="CENTER" spacing="14.0"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="group_three.collegeworkmanager.controller.SignupController"
+      prefWidth="400.0" prefHeight="550.0"
+      style="-fx-background-color: #f0f4f8;">
+    <padding>
+        <Insets top="50.0" bottom="50.0" left="60.0" right="60.0"/>
+    </padding>
+
+    <Label text="Create Account"
+           style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+    <Label text="Join College Work Manager"
+           style="-fx-font-size: 13px; -fx-text-fill: #7f8c8d;"/>
+
+    <TextField fx:id="nameField" promptText="Full Name"
+               prefWidth="280.0"
+               style="-fx-font-size: 14px; -fx-padding: 8;"/>
+    <TextField fx:id="emailField" promptText="Email address"
+               prefWidth="280.0"
+               style="-fx-font-size: 14px; -fx-padding: 8;"/>
+    <PasswordField fx:id="passwordField" promptText="Password (min. 6 characters)"
+                   prefWidth="280.0"
+                   style="-fx-font-size: 14px; -fx-padding: 8;"/>
+
+    <Button fx:id="signupButton" text="Create Account" onAction="#handleSignup"
+            prefWidth="280.0"
+            style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10; -fx-cursor: hand; -fx-background-radius: 4;"/>
+
+    <Hyperlink text="Already have an account? Login" onAction="#goToLogin"
+               style="-fx-font-size: 13px;"/>
+
+    <Label fx:id="errorLabel" wrapText="true" maxWidth="280.0"
+           style="-fx-text-fill: #e74c3c; -fx-font-size: 12px;"/>
+</VBox>
