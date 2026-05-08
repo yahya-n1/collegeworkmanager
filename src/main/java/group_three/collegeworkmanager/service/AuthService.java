@@ -4,6 +4,7 @@ import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import group_three.collegeworkmanager.config.FirebaseConfig;
 import group_three.collegeworkmanager.model.Role;
 import group_three.collegeworkmanager.model.User;
@@ -54,11 +55,15 @@ public class AuthService {
         String url = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=" + FirebaseConfig.WEB_API_KEY;
         JsonObject response = post(url, body.toString());
 
-        if (response.has("error")) {
-            throw new Exception(response.getAsJsonObject("error").get("message").getAsString());
-        }
+        System.out.println(response.toString());
 
+        if (response.has("error")) {
+            String errorMessage = response.getAsJsonObject("error").get("message").getAsString();
+            throw new Exception("Auth Failed: " + errorMessage);
+        }
         String uid = response.get("localId").getAsString();
+
+
 
         Firestore db = FirebaseService.getFirestore();
         DocumentSnapshot doc = db.collection("users").document(uid).get().get();
@@ -89,6 +94,6 @@ public class AuthService {
                 .POST(HttpRequest.BodyPublishers.ofString(bodyJson))
                 .build();
         HttpResponse<String> response = HTTP.send(request, HttpResponse.BodyHandlers.ofString());
-        return GSON.fromJson(response.body(), JsonObject.class);
+        return JsonParser.parseString(response.body()).getAsJsonObject();
     }
 }

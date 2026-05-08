@@ -38,7 +38,7 @@
                     <padding><Insets top="10" right="8" bottom="10" left="10"/></padding>
                     <HBox spacing="6.0" alignment="CENTER_LEFT">
                         <Label text="My Courses" style="-fx-font-weight: bold;"/>
-                        <Button text="↻ Refresh" onAction="#handleRefreshCourses"
+                        <Button text="↻" onAction="#handleRefreshCourses"
                                 styleClass="bg-neutral"/>
                     </HBox>
                     <ListView fx:id="courseListView" VBox.vgrow="ALWAYS"/>

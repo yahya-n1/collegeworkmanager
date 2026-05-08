@@ -7,6 +7,7 @@ import group_three.collegeworkmanager.model.Submission;
 import group_three.collegeworkmanager.model.User;
 import group_three.collegeworkmanager.service.AuthService;
 import group_three.collegeworkmanager.service.FirebaseService;
+import group_three.collegeworkmanager.util.DialogUtils;
 import group_three.collegeworkmanager.util.SceneManager;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
@@ -214,6 +215,8 @@ public class FacultyDashboardController implements Initializable {
             return r;
         });
 
+        DialogUtils.AddDialogStyling(dialog);
+
         dialog.showAndWait().ifPresent(data -> {
             if (data.get("title").isEmpty()) { showError("Title is required."); return; }
             new Thread(() -> {
@@ -250,6 +253,7 @@ public class FacultyDashboardController implements Initializable {
                 "Delete \"" + a.getTitle() + "\"? This cannot be undone.",
                 ButtonType.OK, ButtonType.CANCEL);
         confirm.setTitle("Delete Assignment");
+        DialogUtils.AddDialogStyling(confirm);
         confirm.showAndWait().ifPresent(btn -> {
             if (btn != ButtonType.OK) return;
             new Thread(() -> {

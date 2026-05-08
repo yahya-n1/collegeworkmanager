@@ -7,8 +7,10 @@ import group_three.collegeworkmanager.model.Role;
 import group_three.collegeworkmanager.model.User;
 import group_three.collegeworkmanager.service.AuthService;
 import group_three.collegeworkmanager.service.FirebaseService;
+import group_three.collegeworkmanager.util.DialogUtils;
 import group_three.collegeworkmanager.util.SceneManager;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 
 public class AdminDashboardController implements Initializable {
 
+
     @FXML private Label adminNameLabel;
 
     // User Management tab
@@ -37,6 +40,7 @@ public class AdminDashboardController implements Initializable {
     @FXML private TableColumn<Course, String> courseNameCol;
     @FXML private TableColumn<Course, String> courseCodeCol;
     @FXML private TableColumn<Course, String> courseFacultyCol;
+    @FXML public TableColumn<Course, String> courseStudentCol;
 
     private final ObservableList<User> users = FXCollections.observableArrayList();
     private final ObservableList<Course> courses = FXCollections.observableArrayList();
@@ -51,6 +55,7 @@ public class AdminDashboardController implements Initializable {
         courseNameCol.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getName()));
         courseCodeCol.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getCode()));
         courseFacultyCol.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getFacultyId()));
+        courseStudentCol.setCellValueFactory(d -> new SimpleStringProperty(String.valueOf(d.getValue().getStudents().size())));
 
         userTable.setItems(users);
         courseTable.setItems(courses);
@@ -73,6 +78,8 @@ public class AdminDashboardController implements Initializable {
         dialog.setTitle("Assign Role");
         dialog.setHeaderText("Assign role to: " + selected.getDisplayName());
         dialog.setContentText("Select role:");
+
+        DialogUtils.AddDialogStyling(dialog);
 
         dialog.showAndWait().ifPresent(role -> new Thread(() -> {
             try {
@@ -98,6 +105,8 @@ public class AdminDashboardController implements Initializable {
         dialog.setTitle("Edit Name");
         dialog.setHeaderText("Editing: " + selected.getEmail());
         dialog.setContentText("New display name:");
+
+        DialogUtils.AddDialogStyling(dialog);
 
         dialog.showAndWait().ifPresent(name -> {
             if (name.trim().isEmpty()) return;
@@ -132,6 +141,8 @@ public class AdminDashboardController implements Initializable {
                 "Delete " + selected.getDisplayName() + "? This cannot be undone.",
                 ButtonType.OK, ButtonType.CANCEL);
         confirm.setTitle("Delete User");
+
+        DialogUtils.AddDialogStyling(confirm);
 
         confirm.showAndWait().ifPresent(btn -> {
             if (btn == ButtonType.OK) new Thread(() -> {
@@ -187,6 +198,8 @@ public class AdminDashboardController implements Initializable {
         dialog.getDialogPane().setPrefWidth(420);
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
+        DialogUtils.AddDialogStyling(dialog);
+
         dialog.setResultConverter(btn -> {
             if (btn != ButtonType.OK) return null;
             Map<String, String> r = new HashMap<>();
@@ -223,7 +236,7 @@ public class AdminDashboardController implements Initializable {
         if (selected == null) { showInfo("No Selection", "Select a course first."); return; }
 
         // Build dialog
-        Dialog<Void> dialog = new Dialog<>();
+        Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Manage Students — " + selected.getCode());
         dialog.setHeaderText("Add or remove students from this course");
 
@@ -233,7 +246,7 @@ public class AdminDashboardController implements Initializable {
 
         ComboBox<User> studentCombo = new ComboBox<>();
         studentCombo.getItems().addAll(
-                users.stream().filter(u -> u.getRole() == Role.STUDENT).collect(Collectors.toList()));
+                users.stream().filter(u -> u.getRole() == Role.STUDENT).toList());
         studentCombo.setCellFactory(lv -> new ListCell<>() {
             @Override protected void updateItem(User u, boolean empty) {
                 super.updateItem(u, empty);
@@ -248,6 +261,7 @@ public class AdminDashboardController implements Initializable {
         });
 
         Button addBtn = new Button("Add Student");
+        addBtn.getStyleClass().add("bg-success");
         addBtn.setOnAction(e -> {
             User s = studentCombo.getValue();
             if (s != null && !enrolled.contains(s.getUid())) {
@@ -256,6 +270,7 @@ public class AdminDashboardController implements Initializable {
         });
 
         Button removeBtn = new Button("Remove Selected");
+        removeBtn.getStyleClass().add("bg-error");
         removeBtn.setOnAction(e -> {
             String sel = enrolledList.getSelectionModel().getSelectedItem();
             if (sel != null) enrolled.remove(sel);
@@ -273,16 +288,26 @@ public class AdminDashboardController implements Initializable {
         dialog.getDialogPane().setPrefWidth(480);
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
-        dialog.showAndWait().ifPresent(v -> new Thread(() -> {
-            try {
-                FirebaseService.getFirestore()
-                        .collection("courses").document(selected.getId())
-                        .update("students", new ArrayList<>(enrolled)).get();
-                Platform.runLater(() -> selected.setStudents(new ArrayList<>(enrolled)));
-            } catch (Exception e) {
-                Platform.runLater(() -> showError("Failed to update students: " + e.getMessage()));
-            }
-        }).start());
+        DialogUtils.AddDialogStyling(dialog);
+
+        dialog.showAndWait().ifPresent(v-> {
+            if(v == ButtonType.CANCEL) {
+                dialog.close();
+                return;
+            };
+
+
+            new Thread(() -> {
+                try {
+                    FirebaseService.getFirestore()
+                            .collection("courses").document(selected.getId())
+                            .update("students", new ArrayList<>(enrolled)).get();
+                    Platform.runLater(() -> selected.setStudents(new ArrayList<>(enrolled)));
+                } catch (Exception e) {
+                    Platform.runLater(() -> showError("Failed to update students: " + e.getMessage()));
+                }
+            }).start();
+        });
     }
 
     @FXML
@@ -332,11 +357,13 @@ public class AdminDashboardController implements Initializable {
 
     private void showError(String msg) {
         Alert a = new Alert(Alert.AlertType.ERROR, msg, ButtonType.OK);
+        DialogUtils.AddDialogStyling(a);
         a.showAndWait();
     }
 
     private void showInfo(String title, String msg) {
         Alert a = new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK);
+        DialogUtils.AddDialogStyling(a);
         a.setTitle(title);
         a.showAndWait();
     }

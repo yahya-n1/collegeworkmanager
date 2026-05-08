@@ -1,6 +1,7 @@
 package group_three.collegeworkmanager.controller;
 
 import group_three.collegeworkmanager.service.AuthService;
+import group_three.collegeworkmanager.util.DialogUtils;
 import group_three.collegeworkmanager.util.SceneManager;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -45,18 +46,20 @@ public class SignupController {
                     alert.setTitle("Account Created");
                     alert.setHeaderText("Success!");
                     alert.setContentText("Your account has been created. An administrator will assign your role before you can log in.");
+
+                    DialogUtils.AddDialogStyling(alert);
                     alert.showAndWait();
                     AuthService.signOut();
                     try {
                         SceneManager.switchToLogin();
                     } catch (Exception e) {
-                        errorLabel.setText("Navigation error: " + e.getMessage());
+                        setErrorLabel("Navigation error: " + e.getMessage());
                     }
                 });
             } catch (Exception e) {
                 Platform.runLater(() -> {
                     signupButton.setDisable(false);
-                    errorLabel.setText(friendlyError(e.getMessage()));
+                    setErrorLabel(friendlyError(e.getMessage()));
                 });
             }
         }).start();
@@ -67,7 +70,7 @@ public class SignupController {
         try {
             SceneManager.switchToLogin();
         } catch (Exception e) {
-            errorLabel.setText("Navigation error: " + e.getMessage());
+            setErrorLabel("Navigation error: " + e.getMessage());
         }
     }
 
@@ -78,4 +81,10 @@ public class SignupController {
         if (msg.startsWith("WEAK_PASSWORD")) return "Password must be at least 6 characters.";
         return msg;
     }
+
+    private void setErrorLabel(String msg){
+        errorLabel.setVisible(true);
+        errorLabel.setText(msg);
+    }
+
 }

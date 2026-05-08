@@ -29,6 +29,7 @@ public class LoginController {
 
         loginButton.setDisable(true);
         errorLabel.setText("");
+        errorLabel.setVisible(false);
 
         new Thread(() -> {
             try {
@@ -37,19 +38,20 @@ public class LoginController {
                     loginButton.setDisable(false);
                     if (user.getRole() == null) {
                         AuthService.signOut();
-                        errorLabel.setText("Your account is pending role assignment. Contact an administrator.");
+                        setErrorLabel("Your account is pending role assignment. Contact an administrator.");
                     } else {
                         try {
                             SceneManager.switchToDashboard(user.getRole());
                         } catch (Exception e) {
-                            errorLabel.setText("Error loading dashboard: " + e.getMessage());
+                            setErrorLabel("Error loading dashboard: " + e.getMessage());
                         }
                     }
                 });
             } catch (Exception e) {
+                System.out.print(e.getMessage());
                 Platform.runLater(() -> {
                     loginButton.setDisable(false);
-                    errorLabel.setText(friendlyError(e.getMessage()));
+                    setErrorLabel(friendlyError(e.getMessage()));
                 });
             }
         }).start();
@@ -74,5 +76,10 @@ public class LoginController {
             case "TOO_MANY_ATTEMPTS_TRY_LATER"     -> "Too many attempts. Please try again later.";
             default -> msg;
         };
+    }
+
+    private void setErrorLabel(String msg){
+        errorLabel.setVisible(true);
+        errorLabel.setText(msg);
     }
 }

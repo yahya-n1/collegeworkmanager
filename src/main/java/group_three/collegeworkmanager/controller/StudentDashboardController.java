@@ -8,6 +8,7 @@ import group_three.collegeworkmanager.model.Submission;
 import group_three.collegeworkmanager.model.User;
 import group_three.collegeworkmanager.service.AuthService;
 import group_three.collegeworkmanager.service.FirebaseService;
+import group_three.collegeworkmanager.util.DialogUtils;
 import group_three.collegeworkmanager.util.SceneManager;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
@@ -106,7 +107,7 @@ public class StudentDashboardController implements Initializable {
                         .collect(Collectors.toList());
                 Platform.runLater(() -> courses.setAll(loaded));
             } catch (Exception e) {
-                Platform.runLater(() -> showError("Failed to load courses: " + e.getMessage()));
+                Platform.runLater(() -> DialogUtils.showError("Failed to load courses: " + e.getMessage()));
             }
         }).start();
     }
@@ -124,7 +125,7 @@ public class StudentDashboardController implements Initializable {
                         .collect(Collectors.toList());
                 Platform.runLater(() -> assignments.setAll(loaded));
             } catch (Exception e) {
-                Platform.runLater(() -> showError("Failed to load assignments: " + e.getMessage()));
+                Platform.runLater(() -> DialogUtils.showError("Failed to load assignments: " + e.getMessage()));
             }
         }).start();
     }
@@ -146,7 +147,7 @@ public class StudentDashboardController implements Initializable {
                         .collect(Collectors.toList());
                 Platform.runLater(() -> submissions.setAll(loaded));
             } catch (Exception e) {
-                Platform.runLater(() -> showError("Failed to load submissions: " + e.getMessage()));
+                Platform.runLater(() -> DialogUtils.showError("Failed to load submissions: " + e.getMessage()));
             }
         }).start();
     }
@@ -176,12 +177,14 @@ public class StudentDashboardController implements Initializable {
         dialog.getDialogPane().setContent(box);
         dialog.getDialogPane().setPrefWidth(460);
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        DialogUtils.AddDialogStyling(dialog);
         dialog.showAndWait().ifPresent(btn -> {
             if (btn != ButtonType.OK) return;
             String text = contentArea.getText().trim();
             String url = fileUrlField.getText().trim();
             if (text.isEmpty() && url.isEmpty()) {
-                showError("Provide submission text or a file URL.");
+                DialogUtils.showError("Provide submission text or a file URL.");
                 return;
             }
             new Thread(() -> {
@@ -195,11 +198,11 @@ public class StudentDashboardController implements Initializable {
                     data.put("submittedAt", new Date().toString());
                     FirebaseService.getFirestore().collection("submissions").add(data).get();
                     Platform.runLater(() -> {
-                        showInfo("Submitted!", "Your assignment was submitted successfully.");
+                        DialogUtils.showInfo("Submitted!", "Your assignment was submitted successfully.");
                         loadMySubmissions();
                     });
                 } catch (Exception e) {
-                    Platform.runLater(() -> showError("Submit failed: " + e.getMessage()));
+                    Platform.runLater(() -> DialogUtils.showError("Submit failed: " + e.getMessage()));
                 }
             }).start();
         });
@@ -212,7 +215,7 @@ public class StudentDashboardController implements Initializable {
         try {
             Desktop.getDesktop().browse(new URI(a.getMaterialUrl()));
         } catch (Exception e) {
-            showError("Could not open material: " + e.getMessage());
+            DialogUtils.showError("Could not open material: " + e.getMessage());
         }
     }
 
@@ -226,17 +229,8 @@ public class StudentDashboardController implements Initializable {
     private void handleLogout() {
         AuthService.signOut();
         try { SceneManager.switchToLogin(); }
-        catch (Exception e) { showError("Logout error: " + e.getMessage()); }
+        catch (Exception e) { DialogUtils.showError("Logout error: " + e.getMessage()); }
     }
 
-    private void showError(String msg) {
-        Alert a = new Alert(Alert.AlertType.ERROR, msg, ButtonType.OK);
-        a.showAndWait();
-    }
 
-    private void showInfo(String title, String msg) {
-        Alert a = new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK);
-        a.setTitle(title);
-        a.showAndWait();
-    }
 }
